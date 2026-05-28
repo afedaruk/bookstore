@@ -1,0 +1,60 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table books {
+  id integer [primary key]
+  author varchar
+  title varchar
+  year integer
+  price float
+}
+
+Table users {
+  id integer [primary key]
+  username varchar
+  created_at timestamp
+}
+
+Table workers {
+  id integer [primary key]
+  first_name varchar
+  last_name varchar
+  role varchar
+}
+
+// orders are both stationary purchases
+// made on a fake user
+// and internet orders
+Table orders {
+  id integer [primary key]
+  body array [note: 'Content of the order']
+  user_id integer [not null]
+  worker_id integer [not null] // cashier or order assembler 
+  status varchar
+  created_at timestamp
+}
+
+Ref user_posts: orders.user_id > users.id // many-to-one
+
+Records users(id, username) {
+  0, 'In-store purchase' // fake user
+  1, 'Alice'
+  2, 'Bob'
+  3, 'Candice'
+}
+
+Records orders(id, body, user_id) {
+  0, '[0]', 0
+  1, '[1]', 1
+  2, '[2]', 3
+}
+
+Records books(id, author, title, year, price) {
+  0, 'George Orwell', '1984', 2000, 15
+  1, 'Stanislaw Lem', 'Solaris', 2001, 20
+  2, 'H. P. Lovecraft', 'The thing on the doorstep', 2002, 25
+}
+
+
+Ref: "books"."id" < "orders"."id"
+Ref: "orders"."worker_id" < "workers"."id"
