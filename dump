@@ -1,0 +1,355 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict kKHLiyK09VjG84HcDn7TplhCmcpoFHflHw9EUJrEip6Ls138uHFgcUUjoReMeB6
+
+-- Dumped from database version 18.4
+-- Dumped by pg_dump version 18.4
+
+-- Started on 2026-06-14 20:12:25
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 219 (class 1259 OID 16390)
+-- Name: books; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.books (
+    id integer NOT NULL,
+    author character varying NOT NULL,
+    title character varying NOT NULL,
+    year integer,
+    price numeric(10,2) NOT NULL,
+    stock integer NOT NULL
+);
+
+
+ALTER TABLE public.books OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16443)
+-- Name: order_items; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_items (
+    id integer NOT NULL,
+    order_id integer NOT NULL,
+    book_id integer NOT NULL,
+    quantity integer NOT NULL,
+    unit_price numeric(10,2) NOT NULL
+);
+
+
+ALTER TABLE public.order_items OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16466)
+-- Name: order_items_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.order_items_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.order_items_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5048 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: order_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.order_items_id_seq OWNED BY public.order_items.id;
+
+
+--
+-- TOC entry 222 (class 1259 OID 16422)
+-- Name: orders; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.orders (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    worker_id integer,
+    status character varying NOT NULL,
+    created_at timestamp without time zone,
+    address character varying NOT NULL
+);
+
+
+ALTER TABLE public.orders OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16463)
+-- Name: orders_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.orders_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.orders_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5049 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: orders_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.orders_id_seq OWNED BY public.orders.id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 16402)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying NOT NULL,
+    email character varying,
+    password character varying,
+    created_at timestamp without time zone
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16411)
+-- Name: workers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workers (
+    id integer NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    role character varying NOT NULL
+);
+
+
+ALTER TABLE public.workers OWNER TO postgres;
+
+--
+-- TOC entry 4874 (class 2604 OID 16467)
+-- Name: order_items id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_items ALTER COLUMN id SET DEFAULT nextval('public.order_items_id_seq'::regclass);
+
+
+--
+-- TOC entry 4873 (class 2604 OID 16465)
+-- Name: orders id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders ALTER COLUMN id SET DEFAULT nextval('public.orders_id_seq'::regclass);
+
+
+--
+-- TOC entry 5036 (class 0 OID 16390)
+-- Dependencies: 219
+-- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.books (id, author, title, year, price, stock) FROM stdin;
+1	George Orwell	1984	1949	15.00	10
+2	Stanislaw Lem	Solaris	1961	20.00	7
+3	H. P. Lovecraft	The Thing on the Doorstep	1937	25.00	4
+\.
+
+
+--
+-- TOC entry 5040 (class 0 OID 16443)
+-- Dependencies: 223
+-- Data for Name: order_items; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.order_items (id, order_id, book_id, quantity, unit_price) FROM stdin;
+1	1	1	1	15.00
+2	1	2	2	20.00
+3	2	3	1	25.00
+4	7	1	1	15.00
+5	8	2	1	20.00
+6	9	3	1	25.00
+7	10	3	1	25.00
+8	10	3	1	25.00
+\.
+
+
+--
+-- TOC entry 5039 (class 0 OID 16422)
+-- Dependencies: 222
+-- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.orders (id, user_id, worker_id, status, created_at, address) FROM stdin;
+1	1	2	paid	2026-02-05 00:00:00	Main Street 10, Warsaw
+2	3	2	pending	2026-02-06 00:00:00	Library Road 7, Gdansk
+3	1	\N	pending	\N	Some address
+4	1	\N	pending	\N	Some address
+5	1	\N	pending	\N	Some address
+6	1	\N	pending	\N	Some address
+7	1	\N	pending	\N	Some address
+8	1	\N	pending	\N	Some address
+9	1	\N	pending	\N	Some address
+10	1	\N	pending	\N	Some address
+\.
+
+
+--
+-- TOC entry 5037 (class 0 OID 16402)
+-- Dependencies: 220
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, username, email, password, created_at) FROM stdin;
+1	alice	alice@example.com	pass123	2026-01-10 00:00:00
+2	bob	bob@example.com	pass123	2026-01-11 00:00:00
+3	candice	candice@example.com	pass123	2026-01-12 00:00:00
+\.
+
+
+--
+-- TOC entry 5038 (class 0 OID 16411)
+-- Dependencies: 221
+-- Data for Name: workers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workers (id, first_name, last_name, role) FROM stdin;
+1	John	Smith	cashier
+2	Maria	Nowak	packer
+\.
+
+
+--
+-- TOC entry 5050 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: order_items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.order_items_id_seq', 8, true);
+
+
+--
+-- TOC entry 5051 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.orders_id_seq', 10, true);
+
+
+--
+-- TOC entry 4876 (class 2606 OID 16401)
+-- Name: books books_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.books
+    ADD CONSTRAINT books_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4884 (class 2606 OID 16452)
+-- Name: order_items order_items_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_items
+    ADD CONSTRAINT order_items_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4882 (class 2606 OID 16432)
+-- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4878 (class 2606 OID 16410)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4880 (class 2606 OID 16421)
+-- Name: workers workers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workers
+    ADD CONSTRAINT workers_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4887 (class 2606 OID 16458)
+-- Name: order_items fk_order_items_book; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_items
+    ADD CONSTRAINT fk_order_items_book FOREIGN KEY (book_id) REFERENCES public.books(id);
+
+
+--
+-- TOC entry 4888 (class 2606 OID 16453)
+-- Name: order_items fk_order_items_order; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_items
+    ADD CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES public.orders(id);
+
+
+--
+-- TOC entry 4885 (class 2606 OID 16433)
+-- Name: orders fk_orders_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 4886 (class 2606 OID 16438)
+-- Name: orders fk_orders_worker; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT fk_orders_worker FOREIGN KEY (worker_id) REFERENCES public.workers(id);
+
+
+-- Completed on 2026-06-14 20:12:26
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict kKHLiyK09VjG84HcDn7TplhCmcpoFHflHw9EUJrEip6Ls138uHFgcUUjoReMeB6
+
