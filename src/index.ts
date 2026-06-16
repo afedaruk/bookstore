@@ -5,6 +5,7 @@ import { handleDbError } from "./utils/error";
 import { categoriesApp, categoriesSwaggerPaths } from "./api/categories";
 import { reportsApp, reportsSwaggerPaths } from "./api/reports";
 import { usersApp, usersSwaggerPaths } from "./api/users";
+import { ordersApp, ordersSwaggerPaths } from "./api/orders";
 
 const app = new Hono();
 
@@ -16,22 +17,25 @@ app.route("/reports", reportsApp);
 
 app.route("/users", usersApp);
 
+app.route("/orders", ordersApp);
+
 app.onError((err, c) => {
-    return handleDbError(err, c);
+  return handleDbError(err, c);
 });
 
 const openApiSpecification = {
-    openapi: "3.0.0",
-    info: {
-        title: "Bookstore API",
-        version: "1.0.0",
-    },
-    paths: {
-        ...booksSwaggerPaths,
-        ...categoriesSwaggerPaths,
-        ...usersSwaggerPaths,
-        ...reportsSwaggerPaths,
-    },
+  openapi: "3.0.0",
+  info: {
+    title: "Bookstore API",
+    version: "1.0.0",
+  },
+  paths: {
+    ...booksSwaggerPaths,
+    ...categoriesSwaggerPaths,
+    ...usersSwaggerPaths,
+    ...ordersSwaggerPaths,
+    ...reportsSwaggerPaths,
+  },
 };
 
 app.get("/doc", (c) => c.json(openApiSpecification));
