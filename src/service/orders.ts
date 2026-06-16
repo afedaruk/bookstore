@@ -1,40 +1,52 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
-import { orders } from "../schema";
-
-export async function createOrder(data: typeof orders.$inferInsert) {
-  const [newOrder] = await db.insert(orders).values(data).returning();
-  return newOrder;
-}
+import { orders, orderItems } from "../schema";
 
 export async function getAllOrders() {
-  return await db.select().from(orders);
+  return await db.select().from(orders).orderBy(orders.id);
 }
 
 export async function getOrderById(id: number) {
-  const [order] = await db.select().from(orders).where(eq(orders.id, id));
+  const result = await db.select().from(orders).where(eq(orders.id, id));
+  return result[0] ?? null;
+}
 
-  return order;
+export async function createOrder(data: typeof orders.$inferInsert) {
+  const result = await db.insert(orders).values(data).returning();
+  return result[0];
 }
 
 export async function updateOrder(
   id: number,
   data: Partial<typeof orders.$inferInsert>,
 ) {
-  const [updatedOrder] = await db
+  const result = await db
     .update(orders)
     .set(data)
     .where(eq(orders.id, id))
     .returning();
 
-  return updatedOrder;
+  return result[0] ?? null;
 }
 
 export async function deleteOrder(id: number) {
-  const [deletedOrder] = await db
-    .delete(orders)
-    .where(eq(orders.id, id))
-    .returning();
+  return await db.transaction(async (tx) => {
+    const existingOrder = await tx
+      .select()
+      .from(orders)
+      .where(eq(orders.id, id));
 
-  return deletedOrder;
+    if (!existingOrder[0]) {
+      return null;
+    }
+
+    await tx.delete(orderItems).where(eq(orderItems.orderId, id));
+
+    const deletedOrder = await tx
+      .delete(orders)
+      .where(eq(orders.id, id))
+      .returning();
+
+    return deletedOrder[0] ?? null;
+  });
 }

@@ -11,33 +11,24 @@ import {
 
 export const ordersApp = new Hono();
 
+const orderStatusSchema = z.enum([
+  "pending",
+  "paid",
+  "shipped",
+  "delivered",
+  "cancelled",
+]);
+
 const createOrderSchema = z.object({
   userId: z.number().int().positive().max(2147483647),
-  workerId: z.number().int().positive().max(2147483647).nullable().optional(),
-  status: z
-    .enum(["pending", "paid", "shipped", "cancelled"])
-    .default("pending"),
-  address: z.string().min(1),
-
-  items: z
-    .array(
-      z.object({
-        bookId: z.number().int().positive().max(2147483647),
-        quantity: z.number().int().positive().max(2147483647),
-        unitPrice: z
-          .string()
-          .max(11)
-          .regex(/^\d{1,8}(\.\d{1,2})?$/),
-      }),
-    )
-    .min(1),
+  status: orderStatusSchema.default("pending"),
+  total: z
+    .string()
+    .max(11)
+    .regex(/^\d{1,8}(\.\d{1,2})?$/),
 });
 
-const updateOrderSchema = z.object({
-  workerId: z.number().int().positive().max(2147483647).nullable().optional(),
-  status: z.enum(["pending", "paid", "shipped", "cancelled"]).optional(),
-  address: z.string().min(1).optional(),
-});
+const updateOrderSchema = createOrderSchema.partial();
 
 const paramSchema = z.object({
   id: z.coerce.number().int().positive(),
@@ -58,9 +49,7 @@ ordersApp.get("/:id", zValidator("param", paramSchema), async (c) => {
 ordersApp.post("/", zValidator("json", createOrderSchema), async (c) => {
   const body = c.req.valid("json");
 
-  const createdOrder = await createOrder(body);
-
-  return c.json(createdOrder, 201);
+  return c.json(await createOrder(body), 201);
 });
 
 ordersApp.patch(
@@ -130,7 +119,6 @@ export const ordersSwaggerPaths = {
       },
       responses: {
         201: { description: "Order created successfully" },
-        400: { description: "Invalid input" },
       },
     },
   },
