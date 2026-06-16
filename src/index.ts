@@ -3,12 +3,15 @@ import { Hono } from "hono";
 import { booksApp, booksSwaggerPaths } from "./api/books";
 import { handleDbError } from "./utils/error";
 import { categoriesApp, categoriesSwaggerPaths } from "./api/categories";
+import { reportsApp, reportsSwaggerPaths } from "./api/reports";
 
 const app = new Hono();
 
 app.route("/books", booksApp);
 
 app.route("/categories", categoriesApp);
+
+app.route("/reports", reportsApp);
 
 app.onError((err, c) => {
     return handleDbError(err, c);
@@ -23,6 +26,7 @@ const openApiSpecification = {
     paths: {
         ...booksSwaggerPaths,
         ...categoriesSwaggerPaths,
+        ...reportsSwaggerPaths,
     },
 };
 

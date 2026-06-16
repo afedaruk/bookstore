@@ -7,7 +7,7 @@ import {
     decimal,
     pgView,
 } from "drizzle-orm/pg-core";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export const categories = pgTable("categories", {
     id: serial("id").primaryKey(),
@@ -26,25 +26,6 @@ export const users = pgTable("users", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
-});
-
-export const carts = pgTable("carts", {
-    id: serial("id").primaryKey(),
-    userId: integer("user_id")
-        .references(() => users.id)
-        .unique()
-        .notNull(),
-});
-
-export const cartItems = pgTable("cart_items", {
-    id: serial("id").primaryKey(),
-    cartId: integer("cart_id")
-        .references(() => carts.id)
-        .notNull(),
-    bookId: integer("book_id")
-        .references(() => books.id)
-        .notNull(),
-    quantity: integer("quantity").notNull().default(1),
 });
 
 export const orders = pgTable("orders", {
@@ -71,7 +52,7 @@ export const orderItems = pgTable("order_items", {
     }).notNull(),
 });
 
-export const categoryBooksView = pgView("category_books_view").as((qb) =>
+export const bookCategoriesView = pgView("book_categories_view").as((qb) =>
     qb
         .select({
             categoryName: categories.name,
@@ -80,5 +61,24 @@ export const categoryBooksView = pgView("category_books_view").as((qb) =>
             stock: books.stock,
         })
         .from(categories)
-        .leftJoin(books, eq(books.categoryId, categories.id)),
+        .rightJoin(books, eq(books.categoryId, categories.id)),
+);
+
+export const categoryRevenueView = pgView("category_revenue_view").as((qb) =>
+    qb
+        .select({
+            categoryName: categories.name,
+            totalItemsSold:
+                sql<number>`COALESCE(sum(${orderItems.quantity}), 0)`
+                    .mapWith(Number)
+                    .as("totalItemsSold"),
+            totalRevenue:
+                sql<number>`COALESCE(sum(${orderItems.quantity} * ${orderItems.pricePerItem}), 0)`
+                    .mapWith(Number)
+                    .as("totalRevenue"),
+        })
+        .from(categories)
+        .leftJoin(books, eq(books.categoryId, categories.id))
+        .leftJoin(orderItems, eq(orderItems.bookId, books.id))
+        .groupBy(categories.name),
 );
