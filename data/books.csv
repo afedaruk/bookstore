@@ -1,0 +1,41 @@
+title,price,stock,categoryId
+Władca Pierścieni,49.99,15,1
+Harry Potter i Kamień Filozoficzny,39.99,25,1
+Wiedźmin: Ostatnie Życzenie,35.00,40,1
+Hobbit,30.50,10,1
+Gra o Tron,45.00,5,1
+Imię Wiatru,50.00,12,1
+Z mgły zrodzony,42.99,18,1
+Archiwum Burzowego Światła,55.99,7,1
+Opowieści z Narnii,29.99,22,1
+Eragon,34.50,14,1
+Diuna,55.00,8,2
+Fundacja,40.00,15,2
+Ślepowidzenie,38.90,6,2
+Neuromancer,33.00,11,2
+Problem Trzech Ciał,49.90,20,2
+Blade Runner,29.99,13,2
+Marsjanin,39.99,25,2
+Hyperion,45.50,9,2
+Solaris,25.00,30,2
+Gwiezdny Pył,34.00,16,2
+Morderstwo w Orient Expressie,29.99,20,3
+Dziewczyna z tatuażem,35.00,18,3
+Zaginiona dziewczyna,32.50,14,3
+Milczenie owiec,39.99,10,3
+Pies Baskerville'ów,25.99,25,3
+Kasacja,34.90,40,3
+Ślepnąc od świateł,45.00,12,3
+Kod da Vinci,38.00,15,3
+Anioły i demony,38.00,11,3
+I nie było już nikogo,29.00,19,3
+TypeScript na poważnie,89.00,50,4
+Czysty Kod,69.00,0,4
+Pragmatyczny programista,75.00,15,4
+Algorytmy i struktury danych,95.00,8,4
+JavaScript: wzorce,55.00,20,4
+React w akcji,82.00,12,4
+Python: instrukcje dla programisty,65.00,18,4
+Grokking Algorithms,59.99,22,4
+Wzorce projektowe,110.00,5,4
+Architektura czystego kodu,79.00,10,4

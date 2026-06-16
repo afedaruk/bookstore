@@ -5,7 +5,8 @@
         "start": "bun run src/index.ts",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
-        "db:push": "drizzle-kit push"
+        "db:push": "drizzle-kit push",
+        "db:seed": "bun run src/seed.ts"
     },
     "dependencies": {
         "@hono/swagger-ui": "^0.6.1",
