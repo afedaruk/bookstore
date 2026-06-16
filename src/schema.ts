@@ -6,6 +6,7 @@ import {
     timestamp,
     decimal,
     pgView,
+    pgEnum,
 } from "drizzle-orm/pg-core";
 import { eq, sql } from "drizzle-orm";
 
@@ -28,11 +29,20 @@ export const users = pgTable("users", {
     email: text("email").notNull().unique(),
 });
 
+export const orderStatusEnum = pgEnum("order_status", [
+    "pending",
+    "paid",
+    "shipped",
+    "delivered",
+    "cancelled",
+]);
+
 export const orders = pgTable("orders", {
     id: serial("id").primaryKey(),
     userId: integer("user_id")
         .references(() => users.id)
         .notNull(),
+    status: orderStatusEnum("status").default("pending").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     total: decimal("total", { precision: 10, scale: 2 }).notNull(),
 });
