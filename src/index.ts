@@ -6,6 +6,8 @@ import { categoriesApp, categoriesSwaggerPaths } from "./api/categories";
 import { reportsApp, reportsSwaggerPaths } from "./api/reports";
 import { usersApp, usersSwaggerPaths } from "./api/users";
 import { ordersApp, ordersSwaggerPaths } from "./api/orders";
+import { orderItemsApp, orderItemsSwaggerPaths } from "./api/orderItems";
+import { transactionsApp, transactionsSwaggerPaths } from "./api/transactions";
 
 const app = new Hono();
 
@@ -18,6 +20,10 @@ app.route("/reports", reportsApp);
 app.route("/users", usersApp);
 
 app.route("/orders", ordersApp);
+
+app.route("/order-items", orderItemsApp);
+
+app.route("/transactions", transactionsApp);
 
 app.onError((err, c) => {
   return handleDbError(err, c);
@@ -34,7 +40,8 @@ const openApiSpecification = {
     ...categoriesSwaggerPaths,
     ...usersSwaggerPaths,
     ...ordersSwaggerPaths,
-    ...reportsSwaggerPaths,
+    ...orderItemsSwaggerPaths,
+    ...transactionsSwaggerPaths,
   },
 };
 
