@@ -42,6 +42,7 @@ const openApiSpecification = {
     ...ordersSwaggerPaths,
     ...orderItemsSwaggerPaths,
     ...transactionsSwaggerPaths,
+    ...reportsSwaggerPaths,
   },
 };
 
