@@ -1,0 +1,80 @@
+Project bookstore {
+  database_type: 'PostgreSQL'
+}
+
+Enum order_status {
+  pending
+  paid
+  shipped
+  delivered
+  cancelled
+}
+
+Table categories {
+  id integer [pk, increment]
+  name text [not null, unique]
+}
+
+Table books {
+  id integer [pk, increment]
+  title text [not null]
+  price decimal(10,2) [not null]
+  stock integer [not null, default: 0]
+  category_id integer
+}
+
+Table users {
+  id integer [pk, increment]
+  name text [not null]
+  email text [not null, unique]
+}
+
+Table orders {
+  id integer [pk, increment]
+  user_id integer [not null]
+  status order_status [not null, default: 'pending']
+  created_at timestamp [not null, default: `now()`]
+  total decimal(10,2) [not null]
+}
+
+Table order_items {
+  id integer [pk, increment]
+  order_id integer [not null]
+  book_id integer [not null]
+  quantity integer [not null]
+  price_per_item decimal(10,2) [not null]
+}
+
+Ref: books.category_id > categories.id
+Ref: orders.user_id > users.id
+Ref: order_items.order_id > orders.id
+Ref: order_items.book_id > books.id
+
+Table book_categories_view {
+  category_name text
+  book_title text
+  book_price decimal(10,2)
+  stock integer
+}
+
+Table category_revenue_view {
+  category_name text
+  total_items_sold integer
+  total_revenue decimal(10,2)
+}
+
+Table top_books_view {
+  book_id integer
+  book_title text
+  book_price decimal(10,2)
+  total_quantity_sold integer
+  total_revenue decimal(10,2)
+}
+
+Table top_users_view {
+  user_id integer
+  user_name text
+  user_email text
+  orders_count integer
+  total_spent decimal(10,2)
+}
