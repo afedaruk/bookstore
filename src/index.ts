@@ -1,10 +1,18 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { Hono } from "hono";
 import { booksApp, booksSwaggerPaths } from "./api/books";
+import { handleDbError } from "./utils/error";
+import { categoriesApp, categoriesSwaggerPaths } from "./api/categories";
 
 const app = new Hono();
 
 app.route("/books", booksApp);
+
+app.route("/categories", categoriesApp);
+
+app.onError((err, c) => {
+    return handleDbError(err, c);
+});
 
 const openApiSpecification = {
     openapi: "3.0.0",
@@ -14,6 +22,7 @@ const openApiSpecification = {
     },
     paths: {
         ...booksSwaggerPaths,
+        ...categoriesSwaggerPaths,
     },
 };
 
